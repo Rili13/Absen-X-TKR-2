@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Absensi X TKR 2</title>
+
+    <style>
+      body {
+        font-family: "Segoe UI", Arial;
+        background: linear-gradient(135deg, #4facfe, #00c6ff);
+        margin: 0;
+        padding: 20px;
+      }
+
+      /* CONTAINER */
+      .container {
+        max-width: 1100px;
+        margin: auto;
+        background: white;
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      }
+
+      /* JUDUL */
+      h1 {
+        text-align: center;
+        margin: 0;
+        font-size: 34px;
+      }
+      h2 {
+        text-align: center;
+        color: #666;
+        margin-bottom: 10px;
+      }
+
+      /* TANGGAL */
+      .tanggal-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+        margin: 20px 0;
+      }
+
+      .tanggal-btn {
+        width: 45px;
+        height: 45px;
+        border-radius: 10px;
+        border: none;
+        background: #e0e0e0;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .tanggal-btn:hover {
+        background: #90caf9;
+      }
+
+      .tanggal-btn.active {
+        background: #007bff;
+        color: white;
+        transform: scale(1.1);
+      }
+
+      /* TOP */
+      .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .stat {
+        font-weight: bold;
+      }
+
+      button {
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      /* RESET */
+      .reset-btn {
+        background: #dc3545;
+        color: white;
+        padding: 6px 12px;
+      }
+
+      /* TABLE */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      th {
+        background: #007bff;
+        color: white;
+        padding: 12px;
+      }
+
+      td {
+        padding: 10px;
+        text-align: center;
+      }
+
+      td:nth-child(2) {
+        text-align: left;
+      }
+
+      tr:nth-child(even) {
+        background: #f9f9f9;
+      }
+
+      /* STATUS */
+      .hadir {
+        background: #d4edda;
+      }
+      .izin {
+        background: #fff3cd;
+      }
+      .sakit {
+        background: #d1ecf1;
+      }
+      .alpha {
+        background: #f8d7da;
+      }
+
+      /* TOMBOL AKSI */
+      .aksi {
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+      }
+
+      .btn-aksi {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+        border-radius: 6px;
+        color: white;
+      }
+
+      .h {
+        background: #28a745;
+      }
+      .i {
+        background: #ffc107;
+        color: black;
+      }
+      .s {
+        background: #17a2b8;
+      }
+      .a {
+        background: #dc3545;
+      }
+
+      /* REKAP */
+      #rekap {
+        margin-top: 25px;
+      }
+
+      .rekap-box {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 15px;
+      }
+
+      .rekap-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 10px;
+        background: white;
+        transition: 0.2s;
+      }
+
+      .rekap-item:hover {
+        transform: scale(1.02);
+      }
+
+      .top1 {
+        background: gold;
+        font-weight: bold;
+      }
+      .top2 {
+        background: silver;
+      }
+      .top3 {
+        background: #cd7f32;
+        color: white;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>SMKN 1 CIBARUSAH</h1>
+      <h2>X TKR 2</h2>
+
+      <div id="tanggalContainer" class="tanggal-container"></div>
+
+      <div class="top-bar">
+        <div id="statistik" class="stat"></div>
+        <button class="reset-btn" onclick="resetAbsen()">Reset</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tabel"></tbody>
+      </table>
+
+      <div id="rekap"></div>
+    </div>
+
+    <script>
+      const siswa = [
+        "ABDUL HADI",
+        "ADITYA",
+        "AHMAD RIFAI MUZIB",
+        "AKBAR SAPUTRA",
+        "ALDI MAULANA",
+        "ALVI NUR HIKAM",
+        "ANDIKA YAHYA",
+        "BADRU",
+        "DAFA FAHMI ALFARIZI",
+        "DAFIN ILHAM SUZANA",
+        "DIKA LESMANA",
+        "EKA AHMAD SAPUTRA",
+        "FAIRUZ AZHAR DARAJAT",
+        "FITRI ASHILA TANJUNG",
+        "HABIB DIA KHAIRUN",
+        "IKRAM MAULIANA",
+        "IQRA FIKRI ALVIANSYAH",
+        "JOEL OSTEEN SIBORO",
+        "M.DIMAS HERMAWAN",
+        "MAMAN",
+        "MOH.RIDHO PRATAMA",
+        "MUHAMMAD AZIL ZALALUDIN",
+        "MUHAMMAD ILHAM JAELANI",
+        "MUHAMMAD SYAICHAN ASOFY",
+        "MUHAMMAD AKMAL ALFARIZI",
+        "M.IBNU QOBLI ALJOHARI",
+        "MUHAMMAD MURTABAH ILHAM",
+        "MUHAMMAD RILI RAMADHAN",
+        "NANDI",
+        "NURDIN",
+        "RADITYA NUR AFRIANSYAH",
+        "RAFLI AKBAR",
+        "RAKHA MAHARDIKA",
+        "RENDIKA NURSATRIA PUTRA",
+        "REYHAN JAMES SAPUTRA",
+        "RICO ERDIAN",
+        "RIZKY RAMADHAN",
+        "YASYFA AGHNIYA PUTRI",
+      ];
+
+      let data = {};
+      let tanggalAktif = "";
+
+      const container = document.getElementById("tanggalContainer");
+
+      for (let i = 1; i <= 31; i++) {
+        const d = new Date(2026, 4, i);
+        const h = d.getDay();
+
+        if (h !== 0 && h !== 6) {
+          const tgl = d.toISOString().split("T")[0];
+
+          const btn = document.createElement("button");
+          btn.textContent = i;
+          btn.className = "tanggal-btn";
+
+          btn.onclick = function () {
+            tanggalAktif = tgl;
+            document
+              .querySelectorAll(".tanggal-btn")
+              .forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            render();
+          };
+
+          container.appendChild(btn);
+
+          if (!tanggalAktif) {
+            tanggalAktif = tgl;
+            btn.classList.add("active");
+          }
+        }
+      }
+
+      function render() {
+        const tabel = document.getElementById("tabel");
+        tabel.innerHTML = "";
+
+        if (!data[tanggalAktif]) data[tanggalAktif] = {};
+
+        let hadir = 0;
+
+        siswa.forEach(function (nama, i) {
+          let info = data[tanggalAktif][nama];
+          let status = "Belum";
+          let lock = false;
+
+          if (info) {
+            status = info.status;
+            lock = info.lock;
+          }
+
+          if (status === "Hadir") hadir++;
+
+          const tr = document.createElement("tr");
+          tr.className = status.toLowerCase();
+
+          tr.innerHTML =
+            "<td>" +
+            (i + 1) +
+            "</td>" +
+            "<td>" +
+            nama +
+            "</td>" +
+            "<td>" +
+            status +
+            "</td>" +
+            "<td><div class='aksi'></div></td>";
+
+          const aksi = tr.querySelector(".aksi");
+
+          [
+            ["Hadir", "h"],
+            ["Izin", "i"],
+            ["Sakit", "s"],
+            ["Alpha", "a"],
+          ].forEach(function (x) {
+            const btn = document.createElement("button");
+            btn.textContent = x[0][0];
+            btn.className = "btn-aksi " + x[1];
+
+            if (lock) btn.disabled = true;
+
+            btn.onclick = function () {
+              absen(nama, x[0]);
+            };
+
+            aksi.appendChild(btn);
+          });
+
+          tabel.appendChild(tr);
+        });
+
+        const total = siswa.length;
+        const persen = Math.round((hadir / total) * 100);
+
+        document.getElementById("statistik").innerText =
+          "Hadir: " + hadir + "/" + total + " (" + persen + "%)";
+
+        renderRekap();
+      }
+
+      function absen(nama, status) {
+        data[tanggalAktif][nama] = { status: status, lock: true };
+        render();
+      }
+
+      function resetAbsen() {
+        data[tanggalAktif] = {};
+        render();
+      }
+
+      function renderRekap() {
+        let rekap = {};
+        siswa.forEach((n) => (rekap[n] = 0));
+
+        for (let t in data) {
+          for (let n in data[t]) {
+            if (data[t][n].status === "Hadir") {
+              rekap[n]++;
+            }
+          }
+        }
+
+        let sorted = Object.entries(rekap).sort((a, b) => b[1] - a[1]);
+
+        let html = "<h3>Rekap Kehadiran Mei</h3><div class='rekap-box'>";
+
+        sorted.forEach(function (item, i) {
+          let cls = i === 0 ? "top1" : i === 1 ? "top2" : i === 2 ? "top3" : "";
+          html +=
+            "<div class='rekap-item " +
+            cls +
+            "'>" +
+            "<span>#" +
+            (i + 1) +
+            "</span>" +
+            "<span>" +
+            item[0] +
+            "</span>" +
+            "<span>" +
+            item[1] +
+            " hari</span>" +
+            "</div>";
+        });
+
+        html += "</div>";
+        document.getElementById("rekap").innerHTML = html;
+      }
+
+      render();
+    </script>
+  </body>
+</html>
